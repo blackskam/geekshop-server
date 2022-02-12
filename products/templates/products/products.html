@@ -123,7 +123,7 @@
                         </a>
                         <div class="card-body">
                             <h4 class="card-title">
-                                <a href="#">{{ product.name }}</a>
+                                <a href="#">{{ product.name|title }}</a>
                             </h4>
                             <h5>{{ product.price }} руб.</h5>
                             <p class="card-text">{{ product.description }}</p>
@@ -162,7 +162,7 @@
 <!-- Footer -->
 <footer class="py-5 bg-dark">
     <div class="container">
-        <p class="m-0 text-center text-white">Copyright &copy; GeekShop 2020</p>
+        <p class="m-0 text-center text-white">Copyright &copy; GeekShop {% now "Y" %}</p>
     </div>
     <!-- /.container -->
 </footer>
