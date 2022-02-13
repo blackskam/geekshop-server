@@ -13,6 +13,28 @@ def index(request):
 def products(request):
     context = {
         'title': 'GeekShop Products',
+        'links_menu': [
+            {
+                'name': 'Новинки',
+                'link': '#',
+            },
+            {
+                'name': 'Одежда',
+                'link': '#',
+            },
+            {
+                'name': 'Обувь',
+                'link': '#',
+            },
+            {
+                'name': 'Аксессуары',
+                'link': '#',
+            },
+            {
+                'name': 'Подарки',
+                'link': '#',
+            },
+        ],
         'products': [
             {
                 'name': 'Худи черного цвета с монограммами adidas Originals',
