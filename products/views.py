@@ -31,7 +31,7 @@ def products(request):
                 'price': '3390',
                 'description': 'Материал с плюшевой текстурой. Удобный и мягкий.',
                 'image': 'vendor/img/products/Brown-sports-oversized-top-ASOS-DESIGN.png'
-             },
+            },
             {
                 'name': 'Черный рюкзак Nike Heritage',
                 'price': '2340',
