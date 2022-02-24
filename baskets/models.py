@@ -5,6 +5,7 @@ from products.models import Product
 
 
 class Basket(models.Model):
+    objects = None
     user = models.ForeignKey(User, on_delete=models.CASCADE)
     product = models.ForeignKey(Product, on_delete=models.CASCADE)
     quantity = models.PositiveIntegerField(default=0)
