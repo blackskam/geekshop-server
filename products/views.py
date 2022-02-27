@@ -15,7 +15,6 @@ def index(request):
 def products(request):
     product = Product.objects.all()
     links_menu = ProductCategory.objects.all()
-
     context = {
         'title': 'GeekShop Products',
         'products': product,
