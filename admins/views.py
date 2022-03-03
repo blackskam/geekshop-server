@@ -1,5 +1,6 @@
 from django.shortcuts import render, HttpResponseRedirect
 from django.urls import reverse
+from django.contrib import messages
 
 from users.models import User
 
@@ -19,6 +20,7 @@ def admins_users_create(request):
         form = UserAdminRegistrationForm(data=request.POST, files=request.FILES)
         if form.is_valid():
             form.save()
+            messages.success(request, 'Пользователь успешно создан!')
             return HttpResponseRedirect(reverse('admins_staff:admins_users'))
         else:
             print(form.errors)
