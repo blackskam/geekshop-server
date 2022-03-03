@@ -4,7 +4,7 @@ from django.contrib import messages
 
 from users.models import User
 
-from admins.forms import UserAdminRegistrationForm
+from admins.forms import UserAdminRegistrationForm, UserAdminProfileForm
 
 def index(request):
     context = {"title": 'Geekshop - Aдмин'}
@@ -28,3 +28,16 @@ def admins_users_create(request):
         form = UserAdminRegistrationForm()
     context = {"title": 'Geekshop - Aдмин', 'form':form}
     return render(request, 'admins/admin-users-create.html', context)
+
+def admins_users_update(request, pk):
+    selected_user = User.objects.get(id=pk)
+    if request.method == 'POST':
+        form = UserAdminProfileForm(instance=selected_user, files=request.FILES, data=request.POST)
+        if form.is_valid():
+            form.save()
+            return HttpResponseRedirect(reverse('admins_staff:admins_users'))
+    else:
+        form = UserAdminProfileForm(instance=selected_user)
+
+    context = {"title": 'Geekshop - Aдмин', 'form': form, 'selected_user': selected_user}
+    return render(request, 'admins/admin-users-update-delete.html', context)
