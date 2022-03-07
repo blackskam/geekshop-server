@@ -1,5 +1,5 @@
 from django.urls import path
-from admins.views import index, UserAdminListView, UserAdminCreateView, UserAdminUpdateView, admins_users_delete, UserAdminDeleteView
+from admins.views import index, UserAdminListView, UserAdminCreateView, UserAdminUpdateView, UserAdminDeleteView
 
 app_name = 'admins'
 
