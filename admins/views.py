@@ -2,6 +2,7 @@ from django.shortcuts import render, HttpResponseRedirect
 from django.urls import reverse, reverse_lazy
 from django.contrib import messages
 from django.contrib.auth.decorators import user_passes_test
+from django.utils.decorators import method_decorator
 from django.views.generic.list import ListView
 from django.views.generic.edit import CreateView, UpdateView, DeleteView
 
@@ -24,6 +25,10 @@ class UserAdminListView(ListView):
         context['title'] = 'Geekshop - Aдмин'
         return context
 
+    @method_decorator(user_passes_test(lambda u: u.is_staff))
+    def dispatch(self, request, *args, **kwargs):
+        return super(UserAdminListView,self).dispatch(request, *args, **kwargs)
+
 
 #@user_passes_test(lambda u: u.is_staff)
 #def admins_users(request):
@@ -42,6 +47,10 @@ class UserAdminCreateView(CreateView):
         context = super(UserAdminCreateView, self).get_context_data(object_list=None, **kwargs)
         context['title'] = 'Geekshop - Aдмин'
         return context
+
+    @method_decorator(user_passes_test(lambda u: u.is_staff))
+    def dispatch(self, request, *args, **kwargs):
+        return super(UserAdminCreateView, self).dispatch(request, *args, **kwargs)
 
 
 #@user_passes_test(lambda u: u.is_staff)
@@ -71,6 +80,10 @@ class UserAdminUpdateView(UpdateView):
         context['title'] = 'Geekshop - Aдмин'
         return context
 
+    @method_decorator(user_passes_test(lambda u: u.is_staff))
+    def dispatch(self, request, *args, **kwargs):
+        return super(UserAdminUpdateView, self).dispatch(request, *args, **kwargs)
+
 #@user_passes_test(lambda u: u.is_staff)
 #def admins_users_update(request, pk):
 #    selected_user = User.objects.get(id=pk)
@@ -95,6 +108,10 @@ class UserAdminDeleteView(DeleteView):
         self.object = self.get_object()
         self.object.save_delete()
         return HttpResponseRedirect(self.success_url)
+
+    @method_decorator(user_passes_test(lambda u: u.is_staff))
+    def dispatch(self, request, *args, **kwargs):
+        return super(UserAdminDeleteView, self).dispatch(request, *args, **kwargs)
 
 
 #@user_passes_test(lambda u: u.is_staff)
