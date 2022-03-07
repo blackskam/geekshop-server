@@ -3,7 +3,7 @@ from django.urls import reverse, reverse_lazy
 from django.contrib import messages
 from django.contrib.auth.decorators import user_passes_test
 from django.views.generic.list import ListView
-from django.views.generic.edit import CreateView, UpdateView
+from django.views.generic.edit import CreateView, UpdateView, DeleteView
 
 from users.models import User
 
@@ -70,8 +70,15 @@ class UserAdminUpdateView(UpdateView):
 #    context = {"title": 'Geekshop - Aдмин', 'form': form, 'selected_user': selected_user}
 #    return render(request, 'admins/admin-users-update-delete.html', context)
 
-@user_passes_test(lambda u: u.is_staff)
-def admins_users_delete(request, pk):
-    user = User.objects.get(id=pk)
-    user.save_delete()
-    return HttpResponseRedirect(reverse('admins_staff:admins_users'))
+
+class UserAdminDeleteView(DeleteView):
+    model = User
+    template_name = 'admins/admin-users-update-delete.html'
+    success_url = reverse_lazy('admins_staff:admins_users')
+
+
+#@user_passes_test(lambda u: u.is_staff)
+#def admins_users_delete(request, pk):
+#    user = User.objects.get(id=pk)
+#    user.save_delete()
+#    return HttpResponseRedirect(reverse('admins_staff:admins_users'))
