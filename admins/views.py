@@ -1,7 +1,10 @@
 from django.shortcuts import render, HttpResponseRedirect
-from django.urls import reverse
-from django.contrib import messages
+from django.urls import reverse, reverse_lazy
+from django.contrib.messages.views import SuccessMessageMixin
 from django.contrib.auth.decorators import user_passes_test
+from django.utils.decorators import method_decorator
+from django.views.generic.list import ListView
+from django.views.generic.edit import CreateView, UpdateView, DeleteView
 
 from users.models import User
 
@@ -12,43 +15,63 @@ def index(request):
     context = {"title": 'Geekshop - Aдмин'}
     return render(request, 'admins/index.html', context)
 
-@user_passes_test(lambda u: u.is_staff)
-def admins_users(request):
-    user = User.objects.all()
-    context = {"title": 'Geekshop - Aдмин', 'users': user}
-    return render(request, 'admins/admin-users-read.html', context)
 
-@user_passes_test(lambda u: u.is_staff)
-def admins_users_create(request):
-    if request.method == 'POST':
-        form = UserAdminRegistrationForm(data=request.POST, files=request.FILES)
-        if form.is_valid():
-            form.save()
-            messages.success(request, 'Пользователь успешно создан!')
-            return HttpResponseRedirect(reverse('admins_staff:admins_users'))
-        else:
-            print(form.errors)
-    else:
-        form = UserAdminRegistrationForm()
-    context = {"title": 'Geekshop - Aдмин', 'form':form}
-    return render(request, 'admins/admin-users-create.html', context)
+class TitleMixin:
+    title = None
 
-@user_passes_test(lambda u: u.is_staff)
-def admins_users_update(request, pk):
-    selected_user = User.objects.get(id=pk)
-    if request.method == 'POST':
-        form = UserAdminProfileForm(instance=selected_user, files=request.FILES, data=request.POST)
-        if form.is_valid():
-            form.save()
-            return HttpResponseRedirect(reverse('admins_staff:admins_users'))
-    else:
-        form = UserAdminProfileForm(instance=selected_user)
+    def get_context_data(self, *, object_list=None, **kwargs):
+        context = super(TitleMixin, self).get_context_data(object_list=None, **kwargs)
+        context['title'] = self.title
+        return context
 
-    context = {"title": 'Geekshop - Aдмин', 'form': form, 'selected_user': selected_user}
-    return render(request, 'admins/admin-users-update-delete.html', context)
 
-@user_passes_test(lambda u: u.is_staff)
-def admins_users_delete(request, pk):
-    user = User.objects.get(id=pk)
-    user.save_delete()
-    return HttpResponseRedirect(reverse('admins_staff:admins_users'))
+class UserAdminListView(TitleMixin, ListView):
+    model = User
+    template_name = 'admins/admin-users-read.html'
+    title = 'Geekshop - Aдмин'
+
+    @method_decorator(user_passes_test(lambda u: u.is_staff))
+    def dispatch(self, request, *args, **kwargs):
+        return super(UserAdminListView,self).dispatch(request, *args, **kwargs)
+
+
+class UserAdminCreateView(TitleMixin, SuccessMessageMixin, CreateView):
+    model = User
+    form_class = UserAdminRegistrationForm
+    template_name = 'admins/admin-users-create.html'
+    success_url = reverse_lazy('admins_staff:admins_users')
+    title = 'Geekshop - Aдмин'
+    success_message = 'Пользователь успешно создан!'
+
+    @method_decorator(user_passes_test(lambda u: u.is_staff))
+    def dispatch(self, request, *args, **kwargs):
+        return super(UserAdminCreateView, self).dispatch(request, *args, **kwargs)
+
+
+class UserAdminUpdateView(TitleMixin, SuccessMessageMixin, UpdateView):
+    model = User
+    form_class = UserAdminProfileForm
+    template_name = 'admins/admin-users-update-delete.html'
+    success_url = reverse_lazy('admins_staff:admins_users')
+    title = 'Geekshop - Aдмин'
+    success_message = 'Пользователь успешно изменён!'
+
+    @method_decorator(user_passes_test(lambda u: u.is_staff))
+    def dispatch(self, request, *args, **kwargs):
+        return super(UserAdminUpdateView, self).dispatch(request, *args, **kwargs)
+
+
+class UserAdminDeleteView(SuccessMessageMixin, DeleteView):
+    model = User
+    template_name = 'admins/admin-users-update-delete.html'
+    success_message = 'Пользователь успешно удалён!'
+    success_url = reverse_lazy('admins_staff:admins_users')
+
+    def delete(self, request, *args, **kwargs):
+        self.object = self.get_object()
+        self.object.save_delete()
+        return HttpResponseRedirect(self.success_url)
+
+    @method_decorator(user_passes_test(lambda u: u.is_staff))
+    def dispatch(self, request, *args, **kwargs):
+        return super(UserAdminDeleteView, self).dispatch(request, *args, **kwargs)
