@@ -36,6 +36,8 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
 
+    'django_extensions',
+
     'products',
     'users',
     'baskets',
@@ -134,3 +136,14 @@ DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 AUTH_USER_MODEL = 'users.User'
 
 LOGIN_URL = '/users/login'
+
+DOMAIN_NAME = 'http://localhost:8080'
+EMAIL_HOST = 'localhost'
+EMAIL_PORT = 25
+
+EMAIL_HOST_USER = 'django@mail.com'
+EMAIL_HOST_PASSWORDS = '1'
+EMAIL_USE_SSL = False
+
+EMAIL_BACKEND = 'django.core.mail.backends.filebased.EmailBackend'
+EMAIL_FILE_PATH = 'tmp/emails'
