@@ -8,6 +8,7 @@ from django.core.mail import send_mail
 
 from users.forms import UserLoginForm, UserRegistrationForm, UserProfileForm
 from baskets.models import Basket
+from users.models import User
 
 
 def login(request):
@@ -52,21 +53,20 @@ def registration(request):
     return render(request, 'users/registration.html', context)
 
 
-def verify(request, email, activation_key):
+def verify(request, email, activate_key):
     try:
-        user = ShopUser.object.get(email=email)
-        if user and user.activation_key == activation_key and not user.is_activation_key_expires:
+        user = User.objects.get(email=email)
+        if user and user.activation_key == activate_key and not user.is_activation_key_expired:
             user.activation_key = ''
             user.activation_key_expires = None
             user.is_active = True
-            user.save(updute_fields=['activation_key', 'activation_key_expires', 'is_active'])
+            user.save(update_fields=['activation_key', 'activation_key_expires', 'is_active'])
             auth.login(request, user)
             return render(request, 'users/verification.html')
+        else:
+            return render(request, 'users/verification.html')
     except Exception as e:
-        pass
-    else:
-        return render(request, 'users/verification.html')
-
+        return render(request, 'index.html')
 
 
 @login_required
