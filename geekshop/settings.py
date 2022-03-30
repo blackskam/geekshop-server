@@ -35,8 +35,8 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
-
-  #  'django_extensions',
+    'social_django',
+    #  'django_extensions',
 
     'products',
     'users',
@@ -133,7 +133,7 @@ MEDIA_ROOT = BASE_DIR / 'media'
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
-#Users
+# Users
 AUTH_USER_MODEL = 'users.User'
 
 LOGIN_URL = '/users/login'
@@ -148,3 +148,15 @@ EMAIL_USE_SSL = False
 
 EMAIL_BACKEND = 'django.core.mail.backends.filebased.EmailBackend'
 EMAIL_FILE_PATH = 'tmp/emails'
+
+SOCIAL_AUTH_VK_OAUTH2_KEY = '8120903'
+SOCIAL_AUTH_VK_OAUTH2_SECRET = 'CWivAEjseL6EXP9evilT'
+SOCIAL_AUTH_VK_OAUTH2_API_VERSION = '5.131'
+SOCIAL_AUTH_VK_OAUTH2_IGNORE_DEFAULT_SCOPE = True
+SOCIAL_AUTH_VK_OAUTH2_SCOPE = ['email', 'age']
+
+LOGIN_REDIRECT_URL = '/'
+
+AUTHENTICATION_BACKENDS = ('django.contrib.auth.backends.ModelBackend',
+                           'social_core.backends.vk.VKOAuth2',
+                           )
