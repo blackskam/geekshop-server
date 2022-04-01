@@ -6,7 +6,7 @@ from django.contrib.auth.decorators import login_required
 from django.conf import settings
 from django.core.mail import send_mail
 
-from users.forms import UserLoginForm, UserRegistrationForm, UserProfileForm
+from users.forms import UserLoginForm, UserRegistrationForm, UserProfileForm, UserProfileEditForm
 from baskets.models import Basket
 from users.models import User
 
@@ -32,10 +32,10 @@ def login(request):
 def registration(request):
 
     def send_verify_link(user):
-        verivy_link = reverse('users:verify', args=[user.email, user.activation_key])
+        verify_link = reverse('users:verify', args=[user.email, user.activation_key])
         subject = f'Для активации пользователя {user.username} пройдите по ссылке'
         message = f'Для подтверждения учетной записи {user.username} на портале\n' \
-                  f'{settings.DOMAIN_NAME} пройдите по сылке {settings.DOMAIN_NAME}{verivy_link}'
+                  f'{settings.DOMAIN_NAME} пройдите по сылке {settings.DOMAIN_NAME}{verify_link}'
         return send_mail(subject, message, settings.EMAIL_HOST_USER, [user.email], fail_silently=False)
 
     if request.method == 'POST':
@@ -73,15 +73,17 @@ def verify(request, email, activate_key):
 def profile(request):
     if request.method == 'POST':
         form = UserProfileForm(instance=request.user, files=request.FILES, data=request.POST)
-        if form.is_valid():
+        profile_form = UserProfileEditForm(request.POST, instance=request.user.userprofile)
+        if form.is_valid() and profile_form.is_valid():
             form.save()
             return HttpResponseRedirect(reverse('users:profile'))
     else:
         form = UserProfileForm(instance=request.user)
-    baskets = Basket.objects.filter(user=request.user)
+        profile_form = UserProfileEditForm(instance=request.user.userprofile)
+    #baskets = Basket.objects.filter(user=request.user)
     context = {'title': 'GeekShop - Профиль',
                'form': form,
-               #'baskets': baskets,
+               'profile_form': profile_form,
                }
     return render(request, 'users/profile.html', context)
 
